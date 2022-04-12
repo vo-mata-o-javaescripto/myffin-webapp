@@ -1,28 +1,41 @@
-<script setup lang="ts">
-import SlotList from "../components/SlotList.vue";
-import FormTeste from "../components/FormTeste.vue";
-</script>
-
 <template>
-  <q-layout
-    view="lhh LpR lff"
-    container
-    style="height: 900px"
-    class="shadow-2 rounded-borders"
-  >
-    <q-header reveal class="bg-black">
-      <q-toolbar>
-        <q-btn flat round dense icon="menu" />
-        <q-toolbar-title>Header</q-toolbar-title>
-        <q-btn flat round dense icon="menu" />
-      </q-toolbar>
-    </q-header>
-
-    <q-page-container>
-      <q-page style="padding-top: 60px" class="q-pa-md">
-        <SlotList />
-        <FormTeste />
-      </q-page>
-    </q-page-container>
-  </q-layout>
+  <div class="row q-gutter-xs">
+    <template v-for="slot in slots" :key="slot.title">
+      <div class="col">
+        <CardSlot
+          :id="slot.id"
+          :title="slot.title"
+          :subtitle="slot.subtitle"
+        ></CardSlot>
+      </div>
+    </template>
+  </div>
 </template>
+
+<script setup lang="ts">
+import { ref } from "vue";
+import CardSlot from "@/components/CardSlot.vue";
+
+const slots = ref([
+  {
+    id: 1,
+    title: "Ações",
+    subtitle: "Sua gaveta de ações",
+  },
+  {
+    id: 2,
+    title: "Imoveis",
+    subtitle: "Sua gaveta de imoveis",
+  },
+  {
+    id: 3,
+    title: "Criptomoeda",
+    subtitle: "Sua gaveta de criptomoeda",
+  },
+  {
+    id: 4,
+    title: "Renda fixa",
+    subtitle: "Sua gaveta de renda fixa",
+  },
+]);
+</script>

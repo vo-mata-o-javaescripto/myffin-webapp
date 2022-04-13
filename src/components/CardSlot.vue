@@ -14,19 +14,19 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from "vue-router";
+  import { useRouter } from 'vue-router';
 
-const router = useRouter();
+  const router = useRouter();
 
-interface Props {
-  id: number;
-  title: string;
-  subtitle: string;
-}
+  interface Props {
+    id: number;
+    title: string;
+    subtitle: string;
+  }
 
-const props = defineProps<Props>();
+  const props = defineProps<Props>();
 
-const goToSlot = () => {
-  return router.push({ name: "slot", params: { id: props.id } });
-};
+  const goToSlot = () => {
+    return router.push({ name: 'slot', params: { id: props.id } });
+  };
 </script>

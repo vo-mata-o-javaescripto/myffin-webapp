@@ -1,13 +1,23 @@
 {
-  "name": "vue-3-test",
-  "version": "0.0.0",
+  "name": "myffin-webapp",
+  "version": "0.0.1",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview --port 5050",
     "test:unit": "vitest --environment jsdom",
     "typecheck": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",    
+    "format": "prettier .  --write",
+    "prepare": "husky install"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,vue}": "npm run lint"
   },
   "dependencies": {
     "@quasar/extras": "^1.13.5",
@@ -33,7 +43,11 @@
     "sass": "^1.50.0",
     "typescript": "~4.6.3",
     "vite": "^2.9.1",
+    "husky": "^7.0.4",
     "vitest": "^0.9.3",
-    "vue-tsc": "^0.34.6"
+    "lint-staged": "^12.3.5",
+    "vue-tsc": "^0.34.6",    
+    "@commitlint/cli": "^16.0.2",
+    "@commitlint/config-conventional": "^16.0.0"
   }
 }

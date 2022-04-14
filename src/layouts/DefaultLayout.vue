@@ -18,7 +18,7 @@
 
     <q-page-container>
       <q-page class="q-pa-md">
-        <RouterView />
+        <RouterView :key="$route.fullPath" />
       </q-page>
     </q-page-container>
   </q-layout>
@@ -33,7 +33,7 @@
       const leftDrawerOpen = ref(false);
       const router = useRouter();
 
-      const goHome = () => router.push({ name: 'Home' });
+      const goHome = () => router.push({ name: 'home' });
 
       return {
         leftDrawerOpen,

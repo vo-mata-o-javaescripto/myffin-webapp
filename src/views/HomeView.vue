@@ -22,20 +22,14 @@
   import { useSlotStore } from '@/stores/slot';
   import CardSlot from '@/components/CardSlot.vue';
   import type { SlotType } from '@/types/SlotType';
-  import { computed } from '@vue/reactivity';
+  import { usePercent } from '@/composables/usePercent';
 
   const slotStore = useSlotStore();
+  const percent = usePercent();
 
   const slots = ref<SlotType[] | []>([]);
 
   slots.value = slotStore.getMainSlots;
 
-  const totalPercent = computed(() => {
-    let total = 0;
-    slots.value.forEach((item) => {
-      total += item.percent;
-    });
-
-    return `${total * 100}%`;
-  });
+  const totalPercent = percent.totalPercent(slots.value);
 </script>

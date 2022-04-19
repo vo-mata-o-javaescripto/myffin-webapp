@@ -14,20 +14,27 @@
         ></CardSlot>
       </div>
     </template>
+
+    <div class="col col-12">
+      <q-table title="Wallet" :rows="rows" :columns="columns" row-key="name" />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
   import { ref } from 'vue';
   import { useSlotStore } from '@/stores/slot';
+  import { useWalletStore } from '@/stores/wallet';
   import { useRoute } from 'vue-router';
   import CardSlot from '@/components/CardSlot.vue';
   import type { SlotType } from '@/types/SlotType';
-  import { computed } from '@vue/reactivity';
+  import { usePercent } from '@/composables/usePercent';
+  import type { QTableProps } from 'quasar';
 
   const route = useRoute();
-
   const slotStore = useSlotStore();
+  const walletStore = useWalletStore();
+  const percent = usePercent();
 
   const slots = ref<SlotType[] | []>([]);
 
@@ -35,12 +42,31 @@
 
   slots.value = slotStore.getSlotsByParentId(parentId.value);
 
-  const totalPercent = computed(() => {
-    let total = 0;
-    slots.value.forEach((item) => {
-      total += item.percent;
-    });
+  const totalPercent = percent.totalPercent(slots.value);
 
-    return `${total * 100}%`;
-  });
+  const columns: QTableProps['columns'] = [
+    {
+      name: 'name',
+      field: 'name',
+      label: 'Name',
+      align: 'left',
+      sortable: true,
+    },
+    {
+      name: 'ticker',
+      field: 'ticker',
+      label: 'Ticker',
+      sortable: true,
+    },
+    { name: 'quantity', field: 'quantity', label: 'Qty' },
+    {
+      name: 'price',
+      field: 'price',
+      label: 'R$',
+      format: (val: any, row: any) => `R$ ${val * row.quantity}`,
+    },
+  ];
+
+  const rows = walletStore.all;
+  const assets = walletStore.getAssetsBySlot(parentId.value);
 </script>

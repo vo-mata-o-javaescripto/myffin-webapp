@@ -2,7 +2,7 @@ import type { SlotType } from '@/types/SlotType';
 import { defineStore } from 'pinia';
 
 export type RootState = {
-  all: SlotType[];
+  all: SlotType[] | [];
 };
 
 export const useSlotStore = defineStore({
@@ -47,6 +47,13 @@ export const useSlotStore = defineStore({
           subtitle: 'Lorem ipsom',
           percent: 0.4,
           parent_id: 1,
+        },
+        {
+          id: 7,
+          title: 'Ações BR Filha',
+          subtitle: 'Lorem ipsom',
+          percent: 0.4,
+          parent_id: 5,
         },
       ],
     } as RootState),

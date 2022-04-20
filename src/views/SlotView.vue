@@ -1,7 +1,9 @@
 <template>
   <div class="row q-gutter-xs">
     <div class="col col-12">
-      <h4>Total da alocação: {{ totalPercent }}</h4>
+      <h4>{{ slotName }}</h4>
+      <h4>Total da alocação gavetas: {{ totalPercent }}</h4>
+      <h4>Total da alocação Ativos: {{ totalPercentAssets }}</h4>
     </div>
 
     <template v-for="slot in slots" :key="slot.title">
@@ -40,6 +42,9 @@
 
   const parentId = ref(Number(route.params.id));
 
+  const slot = slotStore.all.find((item) => item.id === parentId.value);
+  const slotName = slot?.title;
+
   slots.value = slotStore.getSlotsByParentId(parentId.value);
 
   const totalPercent = percent.totalPercent(slots.value);
@@ -58,15 +63,72 @@
       label: 'Ticker',
       sortable: true,
     },
-    { name: 'quantity', field: 'quantity', label: 'Qty' },
+
+    {
+      name: 'percent',
+      field: 'percent',
+      label: 'Alocação meta %',
+      format: (val: any) => `${val * 100}%`,
+    },
+    {
+      name: 'percent_current',
+      field: 'percent_current',
+      label: 'Alocação corrente %',
+      format: (val: any) => `${(val * 100).toFixed(2)}%`,
+    },
+    {
+      name: 'percent_diff',
+      field: 'percent_diff',
+      label: 'Ponto percentual',
+      format: (val: any) => `${(val * 100).toFixed(2)}`,
+    },
+    { name: 'slot_name', field: 'slot_name', label: 'Gaveta' },
     {
       name: 'price',
       field: 'price',
+      label: 'Preço',
+      format: (val: any) =>
+        val.toLocaleString('pt-br', {
+          style: 'currency',
+          currency: 'BRL',
+        }),
+    },
+    { name: 'quantity', field: 'quantity', label: 'Qty' },
+    {
+      name: 'quantity_target',
+      field: 'quantity_target',
+      label: 'Qty Meta',
+      format: (val: any) => `${val.toFixed(2)}`,
+    },
+    {
+      name: 'amount_target',
+      field: 'amount_target',
+      label: 'R$ Meta',
+      format: (val: any) =>
+        val.toLocaleString('pt-br', {
+          style: 'currency',
+          currency: 'BRL',
+        }),
+    },
+    {
+      name: 'totalValue',
+      field: 'totalValue',
       label: 'R$',
-      format: (val: any, row: any) => `R$ ${val * row.quantity}`,
+      format: (val: any) =>
+        val.toLocaleString('pt-br', {
+          style: 'currency',
+          currency: 'BRL',
+        }),
     },
   ];
 
-  const rows = walletStore.all;
-  const assets = walletStore.getAssetsBySlot(parentId.value);
+  // const rows = walletStore.all;
+  const rows = walletStore.getAssetsBySlot(parentId.value);
+
+  const totalAssets = rows.reduce(
+    (acumulador, elemento) => (acumulador += elemento.percent),
+    0
+  );
+
+  const totalPercentAssets = `${(totalAssets * 100).toFixed(2)}%`;
 </script>

@@ -48,13 +48,6 @@ export const useSlotStore = defineStore({
           percent: 0.4,
           parent_id: 1,
         },
-        {
-          id: 7,
-          title: 'Ações BR Filha',
-          subtitle: 'Lorem ipsom',
-          percent: 0.4,
-          parent_id: 5,
-        },
       ],
     } as RootState),
   getters: {

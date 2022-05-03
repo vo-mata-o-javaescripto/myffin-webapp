@@ -44,7 +44,7 @@
 
   const slots = ref<SlotType[] | []>([]);
 
-  const parentId = ref(Number(route.params.id));
+  const parentId = ref<string>(route.params.id as string);
 
   const slot = slotStore.all.find((item) => item.id === parentId.value);
   const slotName = slot?.title;
@@ -52,7 +52,7 @@
   slots.value = slotStore.getSlotsByParentId(parentId.value);
 
   const totalPercent = percent.totalPercent(slots.value);
-
+  // debugger;
   const columns: QTableProps['columns'] = [
     {
       name: 'name',
@@ -72,19 +72,19 @@
       name: 'percent',
       field: 'percent',
       label: 'Alocação meta %',
-      format: (val: any) => `${val * 100}%`,
+      format: (val: any) => `${Number(val).toFixed(2)}%`,
     },
     {
       name: 'percent_current',
       field: 'percent_current',
       label: 'Alocação corrente %',
-      format: (val: any) => `${(val * 100).toFixed(2)}%`,
+      format: (val: any) => `${val.toFixed(2)}%`,
     },
     {
       name: 'percent_diff',
       field: 'percent_diff',
       label: 'Ponto percentual',
-      format: (val: any) => `${(val * 100).toFixed(2)}`,
+      format: (val: any) => `${val.toFixed(2)}`,
     },
     { name: 'slot_name', field: 'slot_name', label: 'Gaveta' },
     {

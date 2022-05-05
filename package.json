@@ -20,6 +20,7 @@
     "*.{ts,vue}": "npm run lint"
   },
   "dependencies": {
+    "@directus/sdk": "^9.10.0",
     "@quasar/extras": "^1.13.5",
     "chart.js": "^3.7.1",
     "pinia": "^2.0.13",

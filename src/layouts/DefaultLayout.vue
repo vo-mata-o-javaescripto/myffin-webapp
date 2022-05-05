@@ -9,6 +9,7 @@
           </q-avatar>
           Global Portfolio
         </q-toolbar-title>
+        <q-btn color="deep-orange" glossy label="Logout" @click="doLogout" />
       </q-toolbar>
     </q-header>
 
@@ -25,6 +26,7 @@
 </template>
 
 <script lang="ts">
+  import { useAuthStore } from '@/stores/auth';
   import { ref, defineComponent } from 'vue';
   import { useRouter } from 'vue-router';
 
@@ -32,12 +34,22 @@
     setup() {
       const leftDrawerOpen = ref(false);
       const router = useRouter();
+      const authStore = useAuthStore();
 
       const goHome = () => router.push({ name: 'home' });
+
+      const doLogout = async () => {
+        await authStore.doLogout();
+
+        if (!authStore.isLogged) {
+          router.push({ name: 'login' });
+        }
+      };
 
       return {
         leftDrawerOpen,
         goHome,
+        doLogout,
         toggleLeftDrawer() {
           leftDrawerOpen.value = !leftDrawerOpen.value;
         },

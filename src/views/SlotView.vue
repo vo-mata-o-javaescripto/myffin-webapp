@@ -126,8 +126,9 @@
     },
   ];
 
-  // const rows = walletStore.all;
-  const rows = walletStore.getAssetsBySlot(parentId.value);
+  walletStore.slotId = parentId.value;
+  walletStore.setStockPrices();
+  const rows = walletStore.getAssetsBySlot;
 
   const totalAssets = rows.reduce(
     (acumulador, elemento) => (acumulador += elemento.percent),

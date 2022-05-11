@@ -1,8 +1,10 @@
+import { Helper } from '@/helpers/Helper';
 import { defineStore } from 'pinia';
 import { useSlotStore } from './slot';
 
 export type RootState = {
   all: any[];
+  slotId: string | undefined;
 };
 
 export const useWalletStore = defineStore({
@@ -10,9 +12,11 @@ export const useWalletStore = defineStore({
   state: () =>
     ({
       all: [],
+      slotId: undefined,
     } as RootState),
   getters: {
-    getAssetsBySlot: (state) => (slotId: any) => {
+    getAssetsBySlot: (state) => {
+      const slotId = state.slotId;
       const slotStore = useSlotStore();
       const assetList = state.all;
       const arr: any[] = [];
@@ -60,6 +64,17 @@ export const useWalletStore = defineStore({
       } catch (error) {
         return error;
       }
+    },
+    async setStockPrices() {
+      this.all = [];
+      const promises = await Promise.all(
+        this.all.map(async (asset) => {
+          const price = await Helper.getStockPrice(asset.ticker);
+          asset.price = price.price;
+          return asset;
+        })
+      );
+      this.all = promises[0];
     },
   },
 });

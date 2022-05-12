@@ -66,7 +66,6 @@ export const useWalletStore = defineStore({
       }
     },
     async setStockPrices() {
-      this.all = [];
       const promises = await Promise.all(
         this.all.map(async (asset) => {
           const price = await Helper.getStockPrice(asset.ticker);
@@ -74,7 +73,8 @@ export const useWalletStore = defineStore({
           return asset;
         })
       );
-      this.all = promises[0];
+      this.all = [];
+      this.all = promises;
     },
   },
 });

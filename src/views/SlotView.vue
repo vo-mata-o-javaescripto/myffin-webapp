@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { onMounted, ref } from 'vue';
   import { useSlotStore } from '@/stores/slot';
   import { useWalletStore } from '@/stores/wallet';
   import { useRoute } from 'vue-router';
@@ -44,7 +44,13 @@
 
   const slots = ref<SlotType[] | []>([]);
 
-  const parentId = ref<string>(route.params.id as string);
+  let parentId = ref<string>(route.params.id as string);
+
+  onMounted(() => {
+    parentId = ref<string>(route.params.id as string);
+    walletStore.slotId = parentId.value;
+    walletStore.setStockPrices();
+  });
 
   const slot = slotStore.all.find((item) => item.id === parentId.value);
   const slotName = slot?.title;
@@ -126,8 +132,6 @@
     },
   ];
 
-  walletStore.slotId = parentId.value;
-  walletStore.setStockPrices();
   const rows = walletStore.getAssetsBySlot;
 
   const totalAssets = rows.reduce(

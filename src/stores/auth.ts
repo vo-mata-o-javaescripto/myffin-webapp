@@ -10,6 +10,18 @@ export type RootState = {
 
 export const useAuthStore = defineStore({
   id: 'auth',
+  // persist: true,
+  persist: {
+    key: 'pinia.auth',
+    // storage: window.sessionStorage,
+    paths: ['authToken'],
+    beforeRestore: (context) => {
+      console.log('Before hydration...');
+    },
+    afterRestore: (context) => {
+      console.log('After hydration...');
+    },
+  },
   state: () =>
     ({
       user: undefined,

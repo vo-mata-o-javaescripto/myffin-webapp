@@ -4,6 +4,8 @@ import DefaultLayout from '@/layouts/DefaultLayout.vue';
 import HomeView from '@/views/HomeView.vue';
 import SlotView from '@/views/SlotView.vue';
 import LoginView from '@/views/LoginView.vue';
+import { useSlotStore } from '@/stores/slot';
+import { useWalletStore } from '@/stores/wallet';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -36,11 +38,20 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore();
   const isAuthenticated = authStore.isLogged;
-  if (to.name !== 'login' && !isAuthenticated) next({ name: 'login' });
-  else next();
+  if (to.name !== 'login' && !isAuthenticated) {
+    next({ name: 'login' });
+  } else {
+    const slotStore = useSlotStore();
+    const walletStore = useWalletStore();
+
+    await slotStore.getAllSlots();
+    await walletStore.getAllWallets();
+
+    next();
+  }
 });
 
 export default router;

@@ -41,15 +41,17 @@
           :columns="columns"
           row-key="name"
         />
-        <BarChart :labels="barChart.labels" :data="barChart.data" />
-        <PieChart :labels="pieChart.labels" :data="pieChart.data" />
+        <template v-if="rows.length > 0">
+          <BarChart :labels="barChart.labels" :data="barChart.data" />
+          <PieChart :labels="pieChart.labels" :data="pieChart.data" />
+        </template>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { onMounted, ref } from 'vue';
+  import { ref, watch } from 'vue';
   import { useSlotStore } from '@/stores/slot';
   import { useWalletStore } from '@/stores/wallet';
   import { useRoute } from 'vue-router';
@@ -60,6 +62,7 @@
   import type { SlotType } from '@/types/SlotType';
   import { usePercent } from '@/composables/usePercent';
   import type { QTableProps } from 'quasar';
+  import { computed } from '@vue/reactivity';
 
   const route = useRoute();
   const slotStore = useSlotStore();
@@ -70,11 +73,9 @@
 
   let parentId = ref<string>(route.params.id as string);
 
-  onMounted(() => {
-    parentId = ref<string>(route.params.id as string);
-    walletStore.slotId = parentId.value;
-    walletStore.setStockPrices();
-  });
+  parentId = ref<string>(route.params.id as string);
+  walletStore.slotId = parentId.value;
+  walletStore.setStockPrices();
 
   const slot = slotStore.all.find((item) => item.id === parentId.value);
   const slotName = slot?.title;
@@ -82,7 +83,7 @@
   slots.value = slotStore.getSlotsByParentId(parentId.value);
 
   const totalPercent = percent.totalPercent(slots.value);
-  // debugger;
+
   const columns: QTableProps['columns'] = [
     {
       name: 'name',
@@ -156,26 +157,45 @@
     },
   ];
 
-  const rows = walletStore.getAssetsBySlot;
+  const rows = computed(() => {
+    return walletStore.getAssetsBySlot;
+  });
 
-  const totalAssets = rows.reduce(
+  const totalAssets = rows.value.reduce(
     (acumulador, elemento) => (acumulador += elemento.percent),
     0
   );
 
   const totalPercentAssets = `${(totalAssets * 100).toFixed(2)}%`;
 
-  const barChart = {
-    labels: rows.map((item) => item.name),
-    data: rows.map((item) => {
-      return Number((item.percent_diff * 100).toFixed(2));
-    }),
-  };
+  let pieChart = ref({
+    labels: [] as any[],
+    data: [] as any[],
+  });
 
-  const pieChart = {
-    labels: rows.map((item) => item.name),
-    data: rows.map((item) => {
-      return Number((item.percent * 100).toFixed(2));
-    }),
-  };
+  const barChart = computed(() => {
+    const rowsLocal = rows.value;
+
+    return {
+      labels: rowsLocal.map((item) => item.name) as any[],
+      data: rowsLocal.map((item) =>
+        Number((item.percent_diff * 100).toFixed(2))
+      ) as any[],
+    };
+  });
+
+  watch(
+    rows,
+    async (val: any[]) => {
+      if (val.length > 0) {
+        pieChart.value = {
+          labels: val.map((item) => item.name),
+          data: val.map((item) => {
+            return Number((item.percent * 100).toFixed(2));
+          }),
+        };
+      }
+    },
+    { immediate: true }
+  );
 </script>

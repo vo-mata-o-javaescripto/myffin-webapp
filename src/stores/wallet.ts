@@ -54,7 +54,7 @@ export const useWalletStore = defineStore({
     },
   },
   actions: {
-    getAllSlots() {
+    getAllWallets() {
       try {
         fetch('http://localhost:8055/items/wallet')
           .then((response) => response.json())

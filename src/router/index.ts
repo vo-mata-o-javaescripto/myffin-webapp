@@ -29,7 +29,7 @@ const router = createRouter({
           component: HomeView,
         },
         {
-          path: '/slot/:id',
+          path: '/slot/:id?',
           name: 'slot',
           component: SlotView,
         },
@@ -47,8 +47,11 @@ router.beforeEach(async (to, from, next) => {
     const slotStore = useSlotStore();
     const walletStore = useWalletStore();
 
-    await slotStore.getAllSlots();
-    await walletStore.getAllWallets();
+    if (walletStore.all.length <= 0) {
+      await slotStore.getAllSlots();
+      await walletStore.getAllWallets();
+      await walletStore.setStockPrices();
+    }
 
     next();
   }

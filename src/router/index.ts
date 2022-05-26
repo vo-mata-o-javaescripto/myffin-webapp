@@ -48,9 +48,7 @@ router.beforeEach(async (to, from, next) => {
     const walletStore = useWalletStore();
 
     if (walletStore.all.length <= 0) {
-      await slotStore.getAllSlots();
-      await walletStore.getAllWallets();
-      await walletStore.setStockPrices();
+      await Promise.all([slotStore.getAllSlots(), walletStore.getAllWallets()]);
     }
 
     next();

@@ -1,6 +1,4 @@
-import { Directus } from '@directus/sdk';
 import { defineStore } from 'pinia';
-const directus = new Directus('http://localhost:8055');
 
 export type RootState = {
   user: string | undefined;
@@ -39,25 +37,39 @@ export const useAuthStore = defineStore({
       const password = this.pass;
 
       if (email !== undefined && password !== undefined) {
-        try {
-          const res: any = await directus.auth.login({ email, password });
-          this.authToken = res.access_token;
-          this.user = undefined;
-          this.pass = undefined;
-        } catch (err) {
-          window.alert('Invalid credentials');
-        }
+        fetch('http://localhost:3005/login', {
+          method: 'POST',
+          body: JSON.stringify({ user: email, pass: password }),
+          headers: { 'Content-type': 'application/json; charset=UTF-8' },
+        })
+          .then((response) => response.json())
+          .then((json) => {
+            console.log(json);
+            this.authToken = json.access_token;
+            this.user = undefined;
+            this.pass = undefined;
+          })
+          .catch((err) => {
+            console.log(err);
+            window.alert('Invalid credentials');
+          });
       }
     },
     async doLogout() {
-      try {
-        await directus.auth.logout();
-        this.authToken = undefined;
-        this.user = undefined;
-        this.pass = undefined;
-      } catch (err) {
-        window.alert('Logout failed');
-      }
+      fetch('http://localhost:3005/logout', {
+        method: 'POST',
+      })
+        .then((response) => response.json())
+        .then((json) => {
+          console.log(json);
+          this.authToken = undefined;
+          this.user = undefined;
+          this.pass = undefined;
+        })
+        .catch((err) => {
+          console.log(err);
+          window.alert('Invalid credentials');
+        });
     },
   },
 });
